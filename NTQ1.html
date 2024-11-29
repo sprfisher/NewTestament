@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>New Testament Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .quiz-container {
+            background-color: #ffffff;
+            padding: 20px;
+            width: 60%;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+        }
+        .quiz-content {
+            flex: 3;
+        }
+        .score-container {
+            flex: 1;
+            margin-left: 20px;
+            padding: 10px;
+            background-color: #e8f5e9;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .stimulus {
+            background-color: #f0f4c3;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            font-style: italic;
+        }
+        .question-number {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .question-text {
+            margin-bottom: 20px;
+        }
+        .answer-button {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #42a5f5;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            text-align: left;
+        }
+        .answer-button:hover {
+            background-color: #1e88e5;
+        }
+        #explanation {
+            background-color: #fff3cd;
+            padding: 10px;
+            margin-top: 20px;
+            border-radius: 5px;
+            font-size: 14px;
+            display: none;
+        }
+        #next-btn {
+            margin-top: 20px;
+            display: none;
+            padding: 10px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #next-btn:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div class="quiz-content">
+            <h1>Quiz</h1>
+            <div id="name-section">
+                <label for="name">Hey there, enter your name?:</label>
+                <input type="text" id="name" placeholder="what's your namefquiz?" required>
+                <button id="start-btn">Start Quiz</button>
+            </div>
+            <div id="quiz-section" style="display:none;">
+                <div id="stimulus" class="stimulus"></div>
+                <p class="question-number" id="question-number"></p>
+                <p class="question-text" id="question-text"></p>
+                <div id="choices-container"></div>
+                <div id="explanation"></div>
+                <button id="next-btn">Next Question</button>
+            </div>
+            <div id="result-section" style="display:none;">
+                <h2>Quiz Completed!</h2>
+                <p id="result-text"></p>
+            </div>
+        </div>
+        <div class="score-container">
+            <p>Correct Answers So Far:</p>
+            <p id="score-counter">0</p>
+        </div>
+    </div>
+
+    <script>
+const questions = [
+    {
+        question: "Who was the mother of Jesus?",
+        choices: [
+            "Elizabeth",
+            "Mary",
+            "Martha",
+            "Sarah"
+        ],
+        correctAnswer: 1,
+        explanation: "Mary was chosen by God to be the mother of Jesus. Elizabeth was Mary's relative and the mother of John the Baptist."
+    },
+    {
+        question: "Where was Jesus born?",
+        choices: [
+            "Nazareth",
+            "Jerusalem",
+            "Bethlehem",
+            "Galilee"
+        ],
+        correctAnswer: 2,
+        explanation: "Jesus was born in Bethlehem, fulfilling the prophecy about the Messiah's birthplace."
+    },
+    {
+        question: "Who baptized Jesus?",
+        choices: [
+            "Peter",
+            "Paul",
+            "John the Baptist",
+            "James"
+        ],
+        correctAnswer: 2,
+        explanation: "John the Baptist baptized Jesus in the Jordan River to fulfill all righteousness."
+    },
+    {
+        question: "What was Jesus' first miracle?",
+        choices: [
+            "Healing a blind man",
+            "Turning water into wine",
+            "Walking on water",
+            "Feeding the 5,000"
+        ],
+        correctAnswer: 1,
+        explanation: "Jesus' first miracle was turning water into wine at a wedding in Cana."
+    },
+    {
+        question: "How many disciples did Jesus have?",
+        choices: [
+            "10",
+            "11",
+            "12",
+            "13"
+        ],
+        correctAnswer: 2,
+        explanation: "Jesus had 12 disciples who followed Him and learned from His teachings."
+    },
+    {
+        question: "What prayer did Jesus teach His disciples?",
+        choices: [
+            "The Lord's Prayer",
+            "The Hail Mary",
+            "The Prayer of David",
+            "The Prayer of Jabez"
+        ],
+        correctAnswer: 0,
+        explanation: "Jesus taught His disciples the Lord's Prayer, which begins with 'Our Father who art in heaven.'"
+    },
+    {
+        question: "Who climbed a tree to see Jesus?",
+        choices: [
+            "Peter",
+            "Zacchaeus",
+            "Matthew",
+            "Luke"
+        ],
+        correctAnswer: 1,
+        explanation: "Zacchaeus, a tax collector, climbed a sycamore tree to see Jesus because he was short."
+    },
+    {
+        question: "What was the name of the angel who told Mary she would have a son?",
+        choices: [
+            "Michael",
+            "Gabriel",
+            "Raphael",
+            "Uriel"
+        ],
+        correctAnswer: 1,
+        explanation: "The angel Gabriel appeared to Mary to tell her she would give birth to Jesus."
+    },
+    {
+        question: "What did Jesus use to feed 5,000 people?",
+        choices: [
+            "Fish and bread",
+            "Fruits and nuts",
+            "Meat and bread",
+            "Vegetables and grains"
+        ],
+        correctAnswer: 0,
+        explanation: "Jesus fed 5,000 people with five loaves of bread and two fish."
+    },
+    {
+        question: "Who betrayed Jesus for 30 pieces of silver?",
+        choices: [
+            "Peter",
+            "Judas Iscariot",
+            "Thomas",
+            "Andrew"
+        ],
+        correctAnswer: 1,
+        explanation: "Judas Iscariot betrayed Jesus to the religious leaders for 30 pieces of silver."
+    },
+    {
+        question: "What was the name of the mountain where Jesus was crucified?",
+        choices: [
+            "Mount Sinai",
+            "Mount of Olives",
+            "Golgotha",
+            "Mount Zion"
+        ],
+        correctAnswer: 2,
+        explanation: "Jesus was crucified on Golgotha, also known as 'The Place of the Skull.'"
+    },
+    {
+        question: "What was the name of the Roman governor who sentenced Jesus to be crucified?",
+        choices: [
+            "Herod",
+            "Pontius Pilate",
+            "Caesar Augustus",
+            "Nero"
+        ],
+        correctAnswer: 1,
+        explanation: "Pontius Pilate, the Roman governor, sentenced Jesus to be crucified despite finding no fault in Him."
+    },
+    {
+        question: "How many days after His death did Jesus rise again?",
+        choices: [
+            "Two days",
+            "Three days",
+            "Four days",
+            "Seven days"
+        ],
+        correctAnswer: 1,
+        explanation: "Jesus rose from the dead on the third day, just as He had foretold."
+    },
+    {
+        question: "Who was the first person to see Jesus after He rose from the dead?",
+        choices: [
+            "Peter",
+            "Mary Magdalene",
+            "John",
+            "Thomas"
+        ],
+        correctAnswer: 1,
+        explanation: "Mary Magdalene was the first person to see Jesus after His resurrection."
+    },
+    {
+        question: "What gift did Jesus promise to send His disciples after He ascended to heaven?",
+        choices: [
+            "The gift of the Holy Spirit",
+            "Wealth and riches",
+            "Health and long life",
+            "Freedom from persecution"
+        ],
+        correctAnswer: 0,
+        explanation: "Jesus promised to send the Holy Spirit to guide and empower His disciples after His ascension."
+    },
+    {
+        question: "What is the name of the last book in the New Testament?",
+        choices: [
+            "John",
+            "Acts",
+            "Revelation",
+            "Romans"
+        ],
+        correctAnswer: 2,
+        explanation: "The last book in the New Testament is Revelation, which describes visions of the end times."
+    },
+    {
+        question: "Who wrote most of the letters (epistles) in the New Testament?",
+        choices: [
+            "Peter",
+            "Paul",
+            "John",
+            "James"
+        ],
+        correctAnswer: 1,
+        explanation: "The Apostle Paul wrote most of the New Testament letters to churches and individuals."
+    },
+    {
+        question: "Where did Jesus perform His first miracle?",
+        choices: [
+            "Cana",
+            "Nazareth",
+            "Jerusalem",
+            "Bethlehem"
+        ],
+        correctAnswer: 0,
+        explanation: "Jesus performed His first miracle at a wedding in Cana, turning water into wine."
+    },
+    {
+        question: "What was Paul's name before he became a follower of Jesus?",
+        choices: [
+            "Saul",
+            "Simon",
+            "Barnabas",
+            "Philip"
+        ],
+        correctAnswer: 0,
+        explanation: "Before becoming a follower of Jesus, Paul was known as Saul and persecuted Christians."
+    },
+    {
+        question: "What did Peter do three times before the rooster crowed?",
+        choices: [
+            "Denied Jesus",
+            "Betrayed Jesus",
+            "Praised Jesus",
+            "Ran away from Jesus"
+        ],
+        correctAnswer: 0,
+        explanation: "Peter denied knowing Jesus three times before the rooster crowed, just as Jesus had predicted."
+    },
+    {
+        question: "What happened when Jesus was baptized?",
+        choices: [
+            "A dove descended and a voice from heaven spoke",
+            "It started raining",
+            "The sky turned dark",
+            "The earth shook"
+        ],
+        correctAnswer: 0,
+        explanation: "When Jesus was baptized, the Holy Spirit descended like a dove, and God's voice said, 'This is my beloved Son.'"
+    },
+    {
+        question: "What happened on the day of Pentecost?",
+        choices: [
+            "The Holy Spirit came upon the disciples",
+            "Jesus was crucified",
+            "The disciples went fishing",
+            "Peter denied Jesus"
+        ],
+        correctAnswer: 0,
+        explanation: "On Pentecost, the Holy Spirit came upon the disciples, giving them power to preach the Gospel."
+    },
+    {
+        question: "Who was the tax collector that became one of Jesus' disciples?",
+        choices: [
+            "Peter",
+            "Matthew",
+            "John",
+            "Luke"
+        ],
+        correctAnswer: 1,
+        explanation: "Matthew, a tax collector, left his job to follow Jesus and became one of His disciples."
+    },
+    {
+        question: "What was the name of the man who carried Jesus' cross?",
+        choices: [
+            "Simon of Cyrene",
+            "Joseph of Arimathea",
+            "Nicodemus",
+            "Andrew"
+        ],
+        correctAnswer: 0,
+        explanation: "Simon of Cyrene was forced by Roman soldiers to carry Jesus' cross."
+    }
+];
+
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let userName = "";
+
+        const nameSection = document.getElementById('name-section');
+        const quizSection = document.getElementById('quiz-section');
+        const resultSection = document.getElementById('result-section');
+        const stimulusElement = document.getElementById('stimulus');
+        const questionNumberElement = document.getElementById('question-number');
+        const questionTextElement = document.getElementById('question-text');
+        const choicesContainer = document.getElementById('choices-container');
+        const explanationElement = document.getElementById('explanation');
+        const nextButton = document.getElementById('next-btn');
+        const scoreCounter = document.getElementById('score-counter');
+        const nameInput = document.getElementById('name');
+        const startButton = document.getElementById('start-btn');
+        const resultText = document.getElementById('result-text');
+
+        startButton.addEventListener('click', () => {
+            userName = nameInput.value.trim();
+            if (!userName) {
+                alert("Please enter your name to start the quiz.");
+                return;
+            }
+            nameSection.style.display = 'none';
+            quizSection.style.display = 'block';
+            loadQuestion();
+        });
+
+        function loadQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            questionNumberElement.textContent = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
+            stimulusElement.textContent = currentQuestion.stimulus;
+            questionTextElement.textContent = currentQuestion.question;
+            choicesContainer.innerHTML = '';
+            explanationElement.style.display = 'none';
+            nextButton.style.display = 'none';
+
+            currentQuestion.choices.forEach((choice, index) => {
+                const button = document.createElement('button');
+                button.className = 'answer-button';
+                button.textContent = choice;
+                button.addEventListener('click', () => checkAnswer(index));
+                choicesContainer.appendChild(button);
+            });
+        }
+
+        function checkAnswer(selectedIndex) {
+            const currentQuestion = questions[currentQuestionIndex];
+            explanationElement.style.display = 'block';
+
+            if (selectedIndex === currentQuestion.correctAnswer) {
+                explanationElement.textContent = "Correct! " + currentQuestion.explanation;
+                score++;
+                scoreCounter.textContent = score; // Update score counter
+                nextButton.style.display = 'block';
+            } else {
+                explanationElement.textContent = "Incorrect. " + currentQuestion.explanation;
+                nextButton.style.display = 'block';
+            }
+        }
+
+        nextButton.addEventListener('click', () => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                endQuiz();
+            }
+        });
+
+        function endQuiz() {
+            quizSection.style.display = 'none';
+            resultSection.style.display = 'block';
+            resultText.textContent = `${userName}, you scored ${score} out of ${questions.length}!`;
+        }
+    </script>
+</body>
+</html>
